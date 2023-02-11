@@ -1,105 +1,75 @@
-
-import UserData from '../model/user.js';
-
+import UserData from "../model/user.js";
 
 const users = [];
 
-export const  getUsers = async (req,res) => {
+export const getUsers = async (req, res) => {
+  try {
+    const users = await UserData.find({}).sort({ age: 1 });
 
-    try{
-
-        const users = await UserData.find({}).sort({"age":1});
-
-        res.send(users);
-
-    }catch(e){
-
-         res.status(400).send(e);
-
-    }
-   
-    
+    res.send(users);
+  } catch (e) {
+    res.status(400).send(e);
+  }
 };
 
-export const createUser = async (req,res) =>{
-    try{
-        // users.push({...user , id: uuidv4()})
-        const  user = new UserData(req.body);
+export const createUser = async (req, res) => {
+  try {
+    // users.push({...user , id: uuidv4()})
+    const user = new UserData(req.body);
 
-        const userAdded = await user.save();
+    const userAdded = await user.save();
 
-        res.status(201).send(userAdded);
-
-    }catch(e){
-
-        res.status(400).send(e);
-
-    }
-  
+    res.status(201).send(userAdded);
+  } catch (e) {
+    res.status(400).send(e);
+  }
 };
 
-export const  getUserByID = async (req,res) => {
+export const getUserByID = async (req, res) => {
+  //const {Id} = req.params;
 
-    //const {Id} = req.params;
-  
-    //const user = users.find((user) => user.id === Id);
-    try{
+  //const user = users.find((user) => user.id === Id);
+  try {
+    const user = await UserData.findById(req.params.Id);
 
-        const user = await UserData.findById(req.params.Id);
-
-        res.send(user);
-
-    }catch(e){
-
-         res.status(400).send(e);
-
-    }
-   
-    
     res.send(user);
-    
+  } catch (e) {
+    res.status(400).send(e);
+  }
+
+  res.send(user);
 };
 
-export const  deleteUser = (req,res) => {
+export const deleteUser = (req, res) => {
+  const { Id } = req.params;
 
-    const {Id} = req.params;
-  
-    const user = users.filter((user) => user.id !== Id);
-  
-    res.send(`User deleted for ID:${Id}`);
-    
+  const user = users.filter((user) => user.id !== Id);
+
+  res.send(`User deleted for ID:${Id}`);
 };
 
-export const  updateUser = async (req,res) => {
+export const updateUser = async (req, res) => {
+  // const { Id } = req.params;
 
-    // const { Id } = req.params;
-  
-    // const user = users.find((user) => user.id === Id);
-  
-    // const { firstName , lastName , age } = req.body;
-  
-    // if(firstName) user.firstName = firstName
-    
-    // if(lastName)  user.lastName = lastName
-    
-    // if(age) user.age = age
+  // const user = users.find((user) => user.id === Id);
 
-    try{
+  // const { firstName , lastName , age } = req.body;
 
-        const user = await UserData.findByIdAndUpdate(req.params.Id, req.body, {new:true});
+  // if(firstName) user.firstName = firstName
 
-        res.send(user);
+  // if(lastName)  user.lastName = lastName
 
-    }catch(e){
+  // if(age) user.age = age
 
-         res.status(500).send(e);
+  try {
+    const user = await UserData.findByIdAndUpdate(req.params.Id, req.body, {
+      new: true,
+    });
 
-    }
+    res.send(user);
+  } catch (e) {
+    res.status(500).send(e);
+  }
 
-  
-    res.send(`User deleted for ID:${Id}`);
-    
-  };
-
-
-
+  res.send(`User deleted for ID:${Id}`);
+};
